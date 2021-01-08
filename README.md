@@ -1,2 +1,4 @@
 
-# I put in this repo some useful programming notes
+## some programming notes kept during my programming journey
+
+
