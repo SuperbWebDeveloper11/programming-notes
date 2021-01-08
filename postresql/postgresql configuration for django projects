@@ -1,0 +1,121 @@
+
+1- what is postgresql 
+2- install postgresql:
+3- roles in postgresql
+4- ident authentication
+5- Switch over (login) to the postgres account on the server
+6- managing roles
+7- managing databases
+8- basics postgres management tasks 
+9- postgres and django intigration
+
+
+## 1- what is postgresql 
+Postgres is a relational database management system that provides an implementation of the SQL querying language.
+
+
+## 2- install postgresql:
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+
+
+## 3- roles in postgresql
+Postgres uses the concept of roles to handle in authentication and authorization. 
+
+
+## 4- ident authentication
+ident authentication in postgres meaning that roles are associated with a matching Unix/Linux system account. 
+
+
+## 5- Switch over (login) to the postgres account on the server
+sudo -i -u postgres or sudo -i -u rolename
+psql # access a Postgres prompt 
+postgres=# \q # Exit out of the PostgreSQL prompt 
+psql -d samir # access a Postgres prompt with different database
+samir=# \q # Exit out of the PostgreSQL prompt 
+
+
+## 6- managing roles
+sudo -i -u postgres 
+
+createuser --interactive
+  Enter name of role to add: samir
+  Shall the new role be a superuser? (y/n) y
+
+postgres=# \du
+                                   List of roles
+Role name |                         Attributes                         | Member of
+-----------+------------------------------------------------------------+-----------
+samir     | Superuser, Create role, Create DB                          | {}
+postgres  | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+
+postgres=# CREATE ROLE first;
+postgres=# CREATE ROLE second WITH LOGIN ENCRYPTED PASSWORD '1234'
+postgres=# CREATE ROLE third WITH SUPERUSER CREATEDB CREATEROLE LOGIN ENCRYPTED PASSWORD '1234'
+
+postgres=# \du
+                                   List of roles
+Role name |                         Attributes                         | Member of
+-----------+------------------------------------------------------------+-----------
+first     | Cannot login                                               | {}
+samir     | Superuser, Create role, Create DB                          | {}
+postgres  | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
+second    |                                                            | {}
+third     | Superuser, Create role, Create DB                          | {}
+
+
+## 7- managing databases
+sudo -i -u postgres 
+psql 
+postgres=# CREATE DATABASE database_name;
+\d or \dt (display list of tables)
+
+## 8- basics postgres management tasks 
+
+CREATE TABLE tab_name (
+    col_name col_type (field length) contraint,
+    ...
+);
+
+ALTER TABLE tab_name ADD col_name;
+
+ALTER TABLE tab_name DROP col_name;
+
+DROP TABLE tab_name;
+
+INSERT INTO tab_name (col_name1, col_name2, ... ) VALUES ('value1', 'value2', ...);
+
+SELETCT col_name1, col_name2, ... FROM tab_name WHERE col_name='value';
+
+DELETE FROM tab_name WHERE col_name='value';
+
+
+## 9- postgres and django intigration
+
+- Install dependencies:
+python -m pip install --upgrade pip
+python -m pip install Django djangorestframework==3.11.1 django-environ drf_yasg Pillow psycopg2-binary django-crispy-forms
+
+- Create Role and Database:
+sudo -i -u postgres 
+postgres=# CREATE ROLE role_name WITH SUPERUSER CREATEDB CREATEROLE LOGIN ENCRYPTED PASSWORD 'role_password'
+postgres=# CREATE DATABASE database_name;
+
+- in .env file:
+SECRET_KEY='0000000000000'
+ENGINE='django.db.backends.postgresql'
+NAME=00000
+ROLE=00000
+PASSWORD=00000
+HOST=localhost
+
+- in settings.py file:
+DATABASES = {
+    'default': {
+        'ENGINE': env("ENGINE"),
+        'NAME': env("NAME"),
+        'USER': env("ROLE"),
+        'PASSWORD': env("PASSWORD"),
+        'HOST': env("HOST"),
+    }
+}
