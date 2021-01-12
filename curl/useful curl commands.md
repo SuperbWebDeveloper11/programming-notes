@@ -1,4 +1,6 @@
 
+## i don't use curl anymore --> i moved to the beautiful 'httpie'
+
 source : "Everything curl by Daniel Stenberg""
 
 cURL project make two products:
