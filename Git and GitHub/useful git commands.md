@@ -1,10 +1,12 @@
 
-What is Git and GitHub :
-Git is the software that runs on your computer and manages your files;
-GitHub is an online platform that allows you to synchronise your local Git reporitory onto the web.
+## What is Git:
+    Git is the software that runs on your computer and manages your files;
+
+## What is GitHub:
+    GitHub is an online platform that allows you to synchronise your local Git reporitory onto the web.
 
 
-Useful Git commands:
+## Useful Git commands:
 
 git init # initialize a Git repository
 git status # check the staging area
@@ -42,19 +44,6 @@ git push origin --delete branchname # necessary efter delete
 git remote prune origin # necessary efter delete 
 
 
-
-
-undo changes:
-   befor committing:
-      git reset --hard
-      git checkout -- proteins.txt
-   after committing:     
-      to last commit:
-          git revert adbd940 (with undoing the changes)
-      to specific commit:     
-         git checkout commitid -- filename (without undoing the changes)
-         git checkout commitid (without undoing the changes)
-         git checkout master (return to the latest commit)
 
 
 
