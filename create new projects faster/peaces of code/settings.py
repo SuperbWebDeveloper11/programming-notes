@@ -115,4 +115,8 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-
+# support authentication with both "username" and "email"
+AUTHENTICATION_BACKENDS = [                                                     
+    'django.contrib.auth.backends.ModelBackend',
+    'accounts.authentication.EmailAuthBackend',
+] 

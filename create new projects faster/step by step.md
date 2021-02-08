@@ -4,13 +4,15 @@
 
 ### Create virtual environment for you django project  
     virtualenv virtual_env_name -p /usr/bin/python3.8  
+    cd virtual_env_name  
+    source bin/activate 
+
+### install dependencies 
     python -m pip install --upgrade pip 
     python -m pip install Django django-environ Pillow psycopg2-binary django-crispy-forms  
     python -m pip install Django djangorestframework==3.11.1 django-environ drf_yasg Pillow psycopg2-binary django-crispy-forms 
  
 ### Create new django project 
-    cd virtual_env_name  
-    source bin/activate 
     django-admin startproject project_name 
  
 ### Create PostgreSQL Role and Database: 
