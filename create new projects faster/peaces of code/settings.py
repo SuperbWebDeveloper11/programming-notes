@@ -14,7 +14,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
-    'accounts.apps.AccountsConfig',
+    # 'accounts.apps.AccountsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -53,6 +53,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'changethis.wsgi.application'
+
+
+'''
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+'''
 
 # postgres configuration from .env file
 DATABASES = {

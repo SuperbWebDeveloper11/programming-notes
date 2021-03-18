@@ -9,7 +9,7 @@
 
 ### install dependencies 
     python -m pip install --upgrade pip 
-    python -m pip install Django django-environ Pillow psycopg2-binary django-crispy-forms  
+    python -m pip install Django django-environ Pillow psycopg2-binary django-crispy-forms django-taggit sorl-thumbnail
     python -m pip install Django djangorestframework==3.11.1 django-environ drf_yasg Pillow psycopg2-binary django-crispy-forms 
  
 ### Create new django project 
@@ -26,7 +26,7 @@
     .gitignore 
  
     urls.py (comment out -accounts- app) 
-    settings.py (modify ROOT_URLCONF and WSGI_APPLICATION) 
+    settings.py (modify ROOT_URLCONF, WSGI_APPLICATION and DATABASES) 
     .env (modify the file according to your postgrSQL role name and database name) 
  
     accounts/ 
