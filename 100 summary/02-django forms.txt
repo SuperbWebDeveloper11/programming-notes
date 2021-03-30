@@ -1,0 +1,176 @@
+
+# Working with forms
+
+
+## HTML forms:
+As well as its <input> elements, a form must specify two things:
+- where: the URL to which the data corresponding to the user’s input should be returned
+- how: the HTTP method the data should be returned by
+
+
+## GET and POST :
+GET and POST are typically used for different purposes.
+GET :
+- should be used only for requests that do not affect the state of the system
+- suitable for things like a web search form
+- unsuitable for a password form
+- unsuitable for large quantities of data, or for binary data, such as an image.
+POST :
+- could be used  on request that change the state of the system
+- POST, coupled with other protections like Django’s CSRF protection offers more control over access
+
+
+## Django’s role in forms:
+Django’s form functionality can simplify and automate vast portions of this work, and can also do it more securely than most programmers would be able to do in code they wrote themselves.
+Django handles three distinct parts of the work involved in forms:
+- preparing and restructuring data to make it ready for rendering
+- creating HTML forms for the data
+- receiving and processing submitted forms and data from the client
+
+
+## The Django Form class:
+In much the same way that a Django model describes the logical structure of an object, its behavior, and the way its parts are represented to us, a Form class describes a form and determines how it works and appears.
+In a similar way that a model class’s fields map to database fields, a form class’s fields map to HTML form <input> elements. (A ModelForm maps a model class’s fields to HTML form <input> elements via a Form; this is what the Django admin is based upon.)
+
+
+## Bound and unbound form instances:
+The distinction between Bound and unbound forms is important:
+- An unbound form has no data associated with it. When rendered to the user, it will be empty or will contain
+default values.
+- A bound form has submitted data, and hence can be used to tell if that data is valid. If an invalid bound form is
+rendered, it can include inline error messages telling the user what data to correct.
+The form’s is_bound attribute will tell you whether a form has data bound to it or not.
+
+
+## is_valid() and form.cleaned_data :
+Whatever the data submitted with a form, once it has been successfully validated by calling is_valid() (and is_valid() has returned True), the validated form data will be in the form.cleaned_data dictionary. This data will have been nicely converted into Python types for you.
+Note: You can still access the unvalidated data directly from request.POST at this point, but the validated data is better.
+
+
+## Looping over the form’s fields:
+{% for field in form %}
+    <div class="fieldWrapper">
+        {{ field.errors }}
+        {{ field.label_tag }} {{ field }}
+        {% if field.help_text %}
+            <p class="help">{{ field.help_text|safe }}</p>
+        {% endif %}
+    </div>
+{% endfor %}
+
+
+## formset:
+A formset is a layer of abstraction to work with multiple forms on the same page.
+
+from django import forms
+class ArticleForm(forms.Form):
+    title = forms.CharField()
+    pub_date = forms.DateField()
+
+from django.forms import formset_factory
+ArticleFormSet = formset_factory(ArticleForm)
+# ArticleFormSet = formset_factory(ArticleForm, extra=2)
+# ArticleFormSet = formset_factory(ArticleForm, max_num=1, validate_max=True)
+# ArticleFormSet = formset_factory(ArticleForm, min_num=3, validate_min=True)
+# ArticleFormSet = formset_factory(ArticleForm, can_order=True)
+# ArticleFormSet = formset_factory(ArticleForm, can_delete=True)
+formset = ArticleFormSet() # Instantiating the formset
+
+for form in formset:
+    print(form.as_table())
+
+
+## Using initial data with a formset
+Initial data is what drives the main usability of a formset. As shown above you can define the number of extra forms. What this means is that you are telling the formset how many additional forms to show in addition to the number of forms it generates from the initial data.
+formset = ArticleFormSet(initial=[
+    {'title': 'Django is now open source',
+    'pub_date': datetime.date.today(),}
+])
+If you use an initial for displaying a formset, you should pass the same initial when processing that formset’s submission so that the formset can detect which forms were changed by the user. For example, you might have something like: ArticleFormSet(request.POST, initial=[...]).
+
+## Limiting the maximum number of forms
+ArticleFormSet = formset_factory(ArticleForm, extra=2, max_num=1) 
+- If the value of max_num is greater than the number of existing items in the initial data, up to extra additional blank forms will be added to the formset, so long as the total number of forms does not exceed max_num. For example, if extra=2 and max_num=2 and the formset is initialized with one initial item, a form for the initial item and one blank form will be displayed.
+- If the number of items in the initial data exceeds max_num, all initial data forms will be displayed regardless of the value of max_num and no extra forms will be displayed. For example, if extra=3 and max_num=1 and the formset is initialized with two initial items, two forms with the initial data will be displayed.
+- A max_num value of None (the default) puts a high limit on the number of forms displayed (1000). In practice this is equivalent to no limit.
+- By default, max_num only affects how many forms are displayed and does not affect validation. If validate_max=True is passed to the formset_factory(), then max_num will affect validation. See validate_max.
+
+
+## Formset validation
+Validation with a formset is almost identical to a regular Form. There is an is_valid method on the formset to provide a convenient way to validate all forms in the formset
+
+data = {
+    'form-TOTAL_FORMS': '1',
+    'form-INITIAL_FORMS': '0',
+    'form-MAX_NUM_FORMS': '',
+}
+formset = ArticleFormSet(data)
+formset.is_valid() # True
+
+data = {
+    'form-TOTAL_FORMS': '2',
+    'form-INITIAL_FORMS': '0',
+    'form-MAX_NUM_FORMS': '',
+    'form-0-title': 'Test',
+    'form-0-pub_date': '1904-06-16',
+    'form-1-title': 'Test',
+    'form-1-pub_date': '', # <-- this date is missing but required
+}
+formset = ArticleFormSet(data)
+formset.is_valid() # False
+formset.errors # [{}, {'pub_date': ['This field is required.']}]
+len(formset.errors) # 2
+formset.total_error_count() # 1
+
+## check if form data differs from the initial data (i.e. the form was sent without any data):
+data = {
+    'form-TOTAL_FORMS': '1',
+    'form-INITIAL_FORMS': '0',
+    'form-MAX_NUM_FORMS': '',
+    'form-0-title': '',
+    'form-0-pub_date': '',
+}
+formset = ArticleFormSet(data)
+formset.has_changed() # False
+
+
+## Using a formset in views and templates:
+### views.py
+def manage_articles(request):
+    ArticleFormSet = formset_factory(ArticleForm)
+    if request.method == 'POST':
+        formset = ArticleFormSet(request.POST, request.FILES)
+        if formset.is_valid():
+            # do something with the formset.cleaned_data
+            pass
+    else:
+        formset = ArticleFormSet()
+    return render(request, 'manage_articles.html', {'formset': formset})
+
+### templates/articles.html
+<form method="post">
+    <table>
+        {{ formset }}
+    </table>
+</form>
+
+or:
+
+<form method="post">
+    {{ formset.management_form }}
+    {% for form in formset %}
+        <ul>
+            <li>{{ form.title }}</li>
+            <li>{{ form.pub_date }}</li>
+        {% if formset.can_delete %}
+            <li>{{ form.DELETE }}</li>
+        {% endif %}
+        {% if formset.can_order %}
+            <li>{{ form.ORDER }}</li>
+        {% endif %}
+        </ul>
+    {% endfor %}
+</form>
+
+
+

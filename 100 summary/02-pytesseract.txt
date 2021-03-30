@@ -1,0 +1,38 @@
+
+
+## What is Optical Character Recognition?
+Optical Character Recognition involves the detection of text content on images and translation of the images to encoded text that the computer can easily understand. An image containing text is scanned and analyzed in order to identify the characters in it. Upon identification, the character is converted to machine-encoded text.
+
+
+## How is it really achieved? 
+- The image is first scanned and the text and graphics elements are converted into a bitmap, which is essentially a matrix of black and white dots. The image is then pre-processed where the brightness and contrast are adjusted to enhance the accuracy of the process.
+- The image is now split into zones identifying the areas of interest such as where the images or text are and this helps kickoff the extraction process. The areas containing text can now be broken down further into lines and words and characters and now the software is able to match the characters through comparison and various detection algorithms. The final result is the text in the image that we're given.
+
+
+## Other Python libraries that can help you extract text from images:
+- Textract: which can extract data from PDFs but is a heavy package.
+- Pyocr: offers more detection options such as sentences, digits, or words.
+
+
+## Implementation:
+
+from PIL import Image
+import pytesseract
+
+image = Image.open(filename) # use Pillow's Image class to open the image 
+text = pytesseract.image_to_string(image, lang='fra') # use pytesseract to detect the string in the image
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

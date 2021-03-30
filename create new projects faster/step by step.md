@@ -4,6 +4,9 @@
 
 ### Create virtual environment for you django project  
     virtualenv virtual_env_name -p /usr/bin/python3.8  
+    or 
+    python3 -m venv virtual_env_name   
+
     cd virtual_env_name  
     source bin/activate 
 
@@ -21,7 +24,7 @@
     CREATE ROLE role_name WITH SUPERUSER CREATEDB CREATEROLE LOGIN ENCRYPTED PASSWORD 'role_password' 
     CREATE DATABASE database_name; 
  
-### Copy and Past some Folders and Files from an peaces of code 
+### Copy and Past some Folders and Files from "peaces of code" Folder
     README.md 
     .gitignore 
  
@@ -40,5 +43,5 @@
 ### Create Profile manualy on the admin site 
      
  
-### Start your creativity *&^%$@\$#%@#%&* 
+### ...  
  
